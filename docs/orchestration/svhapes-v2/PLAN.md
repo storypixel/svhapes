@@ -48,7 +48,7 @@
 - **Depends on:** W1 and W2
 - **Provides:** `0.2.0` npm package and live iamnotsam demo
 - **Tasks:**
-  - [ ] T-007 — Bump, test, publish, tag, and push v0.2.0.
+  - [ ] T-007 — Bump, test, publish, tag, and push v0.2.1.
   - [ ] T-008 — Update site submodule, build, deploy, and verify live output.
 - **Integration check:** npm and site reference the same commit/version.
 

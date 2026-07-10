@@ -30,7 +30,7 @@ Developers can generate common `shape()` geometry without hand-calculating corne
 - [ ] New builders validate inputs, preserve normalized bounds, and have regression tests.
 - [ ] Catalog and generated artifacts include the new presets and are deterministic.
 - [ ] Demo exposes copyable examples with reduced-motion-safe existing motion examples.
-- [ ] `svhapes@0.2.0` is publicly installable and the live demo serves the same release.
+- [ ] `svhapes@0.2.1` is publicly installable and the live demo serves the same release.
 
 ## Constraints and existing assets
 
