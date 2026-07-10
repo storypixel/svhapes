@@ -60,6 +60,26 @@ test('standalone CSS preserves fallback and progressive enhancement', () => {
   assert.match(css, /border-radius: 20px/);
   assert.match(css, /@supports \(clip-path: shape/);
   assert.match(css, /clip-path: shape\(/);
+  assert.throws(
+    () => shapeToCss(`${shape}; body { color: red; }`),
+    /safe CSS shape/,
+  );
+  assert.throws(
+    () => shapeToCss(shape, { className: '.example, body' }),
+    /simple class selectors/,
+  );
+  assert.throws(
+    () => shapeToCss(shape, { fallbackRadius: '20px; color: red' }),
+    /numeric CSS radius/,
+  );
+});
+
+test('published point schema requires exactly two coordinates', async () => {
+  const schema = JSON.parse(await readFile(new URL('../schema/svhape.schema.json', import.meta.url), 'utf8'));
+  assert.equal(schema.$defs.point.minItems, 2);
+  assert.equal(schema.$defs.point.maxItems, 2);
+  assert.equal(schema.$defs.point.prefixItems.length, 2);
+  assert.equal(schema.$defs.point.items, false);
 });
 
 test('generated catalog and stylesheet contain every source definition', async () => {
@@ -72,6 +92,9 @@ test('generated catalog and stylesheet contain every source definition', async (
     const entry = catalog.shapes.find(({ id }) => id === definition.id);
     assert.ok(entry, definition.id);
     assert.match(entry.geometry.sourceDigest, /^sha256-[a-f0-9]{64}$/);
+    assert.ok(entry.snippets.standaloneCss.includes(`.svhape--${definition.id} {`));
+    assert.ok(entry.snippets.html.includes(`svhape--${definition.id}`));
+    assert.ok(entry.agent.html.includes(`svhape--${definition.id}`));
     assert.ok(css.includes(`.svhape--${definition.id} {`));
   }
 });
@@ -93,4 +116,19 @@ test('CLI returns stable JSON and useful errors', () => {
   assert.equal(failure.status, 3);
   const error = JSON.parse(failure.stderr);
   assert.equal(error.error.code, 'UNKNOWN_SHAPE');
+
+  const invalidInvocations = [
+    ['frobnicate', '--format', 'json'],
+    ['show', 'golden-tide', 'extra', '--format', 'json'],
+    ['show', 'golden-tide', '--family', 'blob', '--format', 'json'],
+  ];
+  for (const args of invalidInvocations) {
+    const invalid = spawnSync(process.execPath, ['bin/svhapes.js', ...args], {
+      cwd: new URL('..', import.meta.url),
+      encoding: 'utf8',
+    });
+    assert.equal(invalid.status, 2, `${args.join(' ')}\n${invalid.stdout}\n${invalid.stderr}`);
+    const invalidError = JSON.parse(invalid.stderr);
+    assert.equal(invalidError.error.code, 'INVALID_ARGUMENTS');
+  }
 });

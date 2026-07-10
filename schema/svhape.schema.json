@@ -39,8 +39,24 @@
         "max": { "type": "number", "exclusiveMinimum": 0 }
       }
     },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uses", "aspect", "contentCapacity", "safeInset", "symmetry", "balance", "edgeActivity"],
+      "properties": {
+        "uses": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "aspect": { "$ref": "#/$defs/aspect" },
+        "contentCapacity": { "enum": ["decorative", "sparse", "standard", "dense"] },
+        "safeInset": { "$ref": "#/$defs/insets" },
+        "symmetry": { "enum": ["none", "horizontal", "vertical", "bilateral", "radial", "approximate"] },
+        "balance": { "enum": ["centered", "top-heavy", "bottom-heavy", "left-heavy", "right-heavy", "diagonal"] },
+        "edgeActivity": { "enum": ["calm", "moderate", "active"] }
+      }
+    },
     "point": {
       "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
       "prefixItems": [
         { "type": "number", "minimum": 0, "maximum": 100 },
         { "type": "number", "minimum": 0, "maximum": 100 }
@@ -59,20 +75,7 @@
         "className": { "type": "string", "pattern": "^svhape--[a-z0-9-]+$" },
         "tags": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
         "recommendedFor": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
-        "selection": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["uses", "aspect", "contentCapacity", "safeInset", "symmetry", "balance", "edgeActivity"],
-          "properties": {
-            "uses": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
-            "aspect": { "$ref": "#/$defs/aspect" },
-            "contentCapacity": { "enum": ["decorative", "sparse", "standard", "dense"] },
-            "safeInset": { "$ref": "#/$defs/insets" },
-            "symmetry": { "enum": ["none", "horizontal", "vertical", "bilateral", "radial", "approximate"] },
-            "balance": { "enum": ["centered", "top-heavy", "bottom-heavy", "left-heavy", "right-heavy", "diagonal"] },
-            "edgeActivity": { "enum": ["calm", "moderate", "active"] }
-          }
-        },
+        "selection": { "$ref": "#/$defs/selection" },
         "geometry": {
           "type": "object",
           "additionalProperties": false,
@@ -108,13 +111,15 @@
         "agent": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["shapeId", "stylesheet", "classes", "optionalClasses", "optionalWrapperClass", "safeInset", "constraints", "prompt"],
+          "required": ["shapeId", "stylesheet", "classes", "optionalClasses", "optionalWrapperClass", "html", "selection", "safeInset", "constraints", "prompt"],
           "properties": {
             "shapeId": { "type": "string" },
             "stylesheet": { "type": "string", "format": "uri" },
             "classes": { "type": "array", "items": { "type": "string" } },
             "optionalClasses": { "type": "array", "items": { "type": "string" } },
             "optionalWrapperClass": { "type": "string" },
+            "html": { "type": "string" },
+            "selection": { "$ref": "#/$defs/selection" },
             "safeInset": { "$ref": "#/$defs/insets" },
             "constraints": { "type": "array", "items": { "type": "string" } },
             "prompt": { "type": "string" }

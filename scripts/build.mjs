@@ -8,7 +8,6 @@ import {
   definitions,
   measureTangentContinuity,
   pointsToShape,
-  shapeToCss,
 } from '../src/index.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -53,10 +52,9 @@ function shapeRule(entry) {
 }
 
 function standaloneCss(definition, shape) {
-  return shapeToCss(shape, {
-    className: `.my-${definition.id}`,
-    fallbackRadius: definition.fallbackRadius,
-  });
+  const selector = `.svhape--${definition.id}`;
+  const safeInset = Math.max(...Object.values(definition.selection.safeInset));
+  return `${selector} {\n  border-radius: ${definition.fallbackRadius};\n  overflow: hidden;\n}\n\n${selector}.svhape--padded {\n  padding: ${safeInset}%;\n}\n\n@supports (clip-path: shape(from 0 0, line to 100% 0, line to 100% 100%, close)) {\n  ${selector} {\n    border-radius: 0;\n    clip-path: ${shape};\n  }\n}`;
 }
 
 function htmlSnippet(id) {
@@ -69,6 +67,7 @@ function agentPrompt(entry) {
     `Include https://cdn.jsdelivr.net/gh/storypixel/svhapes@v${version}/dist/svhapes.css`,
     `Apply classes "svhape svhape--${entry.id}"; add "svhape--padded" when the library should supply padding.`,
     'Use a parent with class "svhape-shadow" when the clipped container needs a shadow.',
+    `Use it only between aspect ratios ${entry.selection.aspect.min} and ${entry.selection.aspect.max}; ${entry.selection.aspect.preferred} is preferred.`,
     `Keep meaningful content inside the published ${entry.safeInset}% safe inset.`,
     'Retain the rounded fallback. Do not invent or hand-edit the generated shape path.',
     'Do not encode essential meaning in the silhouette.',
@@ -146,6 +145,8 @@ const shapes = definitions
         classes: ['svhape', `svhape--${definition.id}`],
         optionalClasses: ['svhape--padded', 'svhape--desktop-only'],
         optionalWrapperClass: 'svhape-shadow',
+        html: htmlSnippet(definition.id),
+        selection: definition.selection,
         safeInset: definition.selection.safeInset,
         constraints: [
           'Keep meaningful content inside the published safe inset.',
@@ -163,7 +164,7 @@ const shapes = definitions
     entry.agent.prompt = agentPrompt(entry);
     return entry;
   })
-  .sort((a, b) => a.id.localeCompare(b.id, 'en'));
+  .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 
 const baseCss = `@layer svhapes {
   .svhape {

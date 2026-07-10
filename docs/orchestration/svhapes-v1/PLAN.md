@@ -27,8 +27,8 @@
 - **Depends on:** None
 - **Provides:** Accepted architecture, catalog scope, and release contracts
 - **Tasks:**
-  - [ ] T-001 — Verify Chia reference, standards support, and iamnotsam integration.
-  - [ ] T-002 — Define catalog taxonomy and agent-facing contracts.
+  - [x] T-001 — Verify Chia reference, standards support, and iamnotsam integration.
+  - [x] T-002 — Define catalog taxonomy and agent-facing contracts.
 - **Integration check:** No material implementation choice remains implicit.
 
 ### W2 — Shape engine and distribution
@@ -37,10 +37,10 @@
 - **Depends on:** T-001, T-002
 - **Provides:** Deterministic generator, 18 definitions, CSS/JSON/CLI distributions, tests
 - **Tasks:**
-  - [ ] T-003 — Implement normalized-anchor validation and Catmull–Rom conversion.
-  - [ ] T-004 — Author and validate at least 18 curated definitions.
-  - [ ] T-005 — Generate CSS and machine-readable catalog artifacts.
-  - [ ] T-006 — Implement and test CLI commands.
+  - [x] T-003 — Implement normalized-anchor validation and Catmull–Rom conversion.
+  - [x] T-004 — Author and validate at least 18 curated definitions.
+  - [x] T-005 — Generate CSS and machine-readable catalog artifacts.
+  - [x] T-006 — Implement and test CLI commands.
 - **Integration check:** Build is deterministic, tests pass, and packed contents are complete.
 
 ### W3 — Demo and documentation
@@ -49,9 +49,9 @@
 - **Depends on:** T-004, T-005
 - **Provides:** Editorial catalog, copy actions, direct inclusion instructions, agent instructions
 - **Tasks:**
-  - [ ] T-007 — Build accessible responsive catalog and filters.
-  - [ ] T-008 — Implement HTML, CSS, and agent-prompt copy modes.
-  - [ ] T-009 — Document CSS, ESM, CLI, schema, fallbacks, and contribution flow.
+  - [x] T-007 — Build accessible responsive catalog and filters.
+  - [x] T-008 — Implement HTML, CSS, and agent-prompt copy modes.
+  - [x] T-009 — Document CSS, ESM, CLI, schema, fallbacks, and contribution flow.
 - **Integration check:** Human and agent interfaces reference the same generated IDs and snippets.
 
 ### W4 — iamnotsam integration and release
@@ -71,7 +71,7 @@
 - **Depends on:** W2, W3, local W4 integration
 - **Provides:** Evidence-ranked findings and release recommendation
 - **Tasks:**
-  - [ ] T-013 — Review API contracts, catalog drift, accessibility, and release packaging.
+  - [x] T-013 — Review API contracts, catalog drift, accessibility, and release packaging.
 - **Integration check:** High-impact findings are resolved or explicitly recorded.
 
 ## Dependency graph

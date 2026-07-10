@@ -2,6 +2,13 @@ export const PHI = (1 + Math.sqrt(5)) / 2;
 
 const DEFAULT_PRECISION = 3;
 const DEFAULT_TENSION = 0;
+const SAFE_CLASS_SELECTOR = /^\.[a-z_][a-z0-9_-]*(?:\.[a-z_][a-z0-9_-]*)*$/i;
+const SAFE_SHAPE_VALUE = /^shape\([a-z0-9.%(),+\-/\s]+\)$/i;
+const RADIUS_TOKEN = '(?:0|(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:px|rem|em|%|vw|vh|vmin|vmax|ch|ex))';
+const SAFE_RADIUS_VALUE = new RegExp(
+  `^${RADIUS_TOKEN}(?:\\s+${RADIUS_TOKEN}){0,3}(?:\\s*\\/\\s*${RADIUS_TOKEN}(?:\\s+${RADIUS_TOKEN}){0,3})?$`,
+  'i',
+);
 
 function assertFiniteNumber(value, label) {
   if (!Number.isFinite(value)) {
@@ -126,8 +133,14 @@ export function shapeToCss(shape, {
   fallbackRadius = '24px',
   includeBase = true,
 } = {}) {
-  if (typeof shape !== 'string' || !shape.startsWith('shape(')) {
-    throw new TypeError('shape must be a CSS shape() string');
+  if (typeof shape !== 'string' || !SAFE_SHAPE_VALUE.test(shape)) {
+    throw new TypeError('shape must be a safe CSS shape() value without declaration delimiters');
+  }
+  if (typeof className !== 'string' || !SAFE_CLASS_SELECTOR.test(className)) {
+    throw new TypeError('className must be one or more simple class selectors');
+  }
+  if (typeof fallbackRadius !== 'string' || !SAFE_RADIUS_VALUE.test(fallbackRadius)) {
+    throw new TypeError('fallbackRadius must contain one to eight numeric CSS radius values');
   }
 
   const base = includeBase

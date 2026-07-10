@@ -73,7 +73,9 @@ Useful exports:
 - `shapeToCss(shape, options)`
 - `definitions` and `getDefinition(id)`
 
-Coordinates use a `0..100` percentage reference box. `tension` ranges from `0` for the standard smooth conversion to `1` for straight control handles at each anchor. Output precision defaults to three decimals.
+Coordinates use a `0..100` percentage reference box. `tension` ranges from `0` for the standard smooth conversion to `1`, which collapses the control handles onto their anchors and produces straight segments. Output precision defaults to three decimals.
+
+`shapeToCss()` accepts generated `shape()` values, simple class selectors, and numeric CSS radius values. It rejects declaration delimiters and compound selector syntax; it is a serializer for developer-authored geometry, not a general-purpose CSS sanitizer.
 
 ## CLI and agents
 

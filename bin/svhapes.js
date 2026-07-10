@@ -6,6 +6,20 @@ import { fileURLToPath } from 'node:url';
 const catalogUrl = new URL('../dist/catalog.json', import.meta.url);
 const schemaVersion = '0.1.0';
 const capacityRank = { decorative: 0, sparse: 1, standard: 2, dense: 3 };
+const commandOptions = {
+  help: [],
+  list: ['family', 'tag', 'ratio', 'capacity', 'format'],
+  show: ['format'],
+  css: ['shadow', 'format'],
+  prompt: ['format'],
+};
+const commandFormats = {
+  help: ['text'],
+  list: ['table', 'ids', 'json'],
+  show: ['text', 'json'],
+  css: ['text', 'css', 'json'],
+  prompt: ['text', 'json'],
+};
 
 function fail(command, code, message, { json = false, exitCode = 2 } = {}) {
   if (json) {
@@ -21,7 +35,7 @@ function fail(command, code, message, { json = false, exitCode = 2 } = {}) {
   process.exit(exitCode);
 }
 
-function parseOptions(args) {
+function parseOptions(args, allowedOptions) {
   const options = { tags: [] };
   const positionals = [];
 
@@ -33,7 +47,7 @@ function parseOptions(args) {
     }
 
     const key = arg.slice(2);
-    if (!['family', 'tag', 'ratio', 'capacity', 'format'].includes(key) && key !== 'shadow') {
+    if (!allowedOptions.includes(key)) {
       throw new Error(`Unknown option: ${arg}`);
     }
     if (key === 'shadow') {
@@ -67,16 +81,31 @@ try {
 }
 
 const [command = 'help', ...rawArgs] = process.argv.slice(2);
+const rawWantsJson = rawArgs.includes('json');
+if (!(command in commandOptions)) {
+  fail(command, 'INVALID_ARGUMENTS', `Unknown command: ${command}`, { json: rawWantsJson });
+}
+
 let parsed;
 try {
-  parsed = parseOptions(rawArgs);
+  parsed = parseOptions(rawArgs, commandOptions[command]);
 } catch (error) {
-  fail(command, 'INVALID_ARGUMENTS', error.message, { json: rawArgs.includes('json') });
+  fail(command, 'INVALID_ARGUMENTS', error.message, { json: rawWantsJson });
 }
 
 const { options, positionals } = parsed;
 const format = options.format ?? (command === 'list' ? 'table' : 'text');
 const wantsJson = format === 'json';
+const expectedPositionals = ['show', 'css', 'prompt'].includes(command) ? 1 : 0;
+if (positionals.length !== expectedPositionals) {
+  const message = expectedPositionals === 1
+    ? `${command} requires exactly one shape ID`
+    : `${command} does not accept positional arguments`;
+  fail(command, 'INVALID_ARGUMENTS', message, { json: wantsJson });
+}
+if (!commandFormats[command].includes(format)) {
+  fail(command, 'INVALID_FORMAT', `Unsupported ${command} format: ${format}`, { json: wantsJson });
+}
 
 if (command === 'list') {
   let matches = [...catalog.shapes];
@@ -100,10 +129,9 @@ if (command === 'list') {
     const widths = [0, 1, 2, 3].map((column) => Math.max(...rows.map((row) => row[column].length), ['ID', 'FAMILY', 'CAPACITY', 'NAME'][column].length));
     console.log(['ID', 'FAMILY', 'CAPACITY', 'NAME'].map((value, index) => value.padEnd(widths[index])).join('  '));
     console.log(rows.map((row) => row.map((value, index) => value.padEnd(widths[index])).join('  ')).join('\n'));
-  } else fail(command, 'INVALID_FORMAT', `Unsupported list format: ${format}`, { json: wantsJson });
+  }
 } else if (['show', 'css', 'prompt'].includes(command)) {
   const id = positionals[0];
-  if (!id) fail(command, 'INVALID_ARGUMENTS', `${command} requires a shape ID`, { json: wantsJson });
   const shape = catalog.shapes.find((candidate) => candidate.id === id);
   if (!shape) fail(command, 'UNKNOWN_SHAPE', `Unknown shape: ${id}`, { json: wantsJson, exitCode: 3 });
 
@@ -113,11 +141,9 @@ if (command === 'list') {
   } else if (command === 'css') {
     const css = options.shadow ? standaloneWithShadow(shape) : shape.snippets.standaloneCss;
     if (wantsJson) console.log(jsonEnvelope(command, { id, css }));
-    else if (format === 'css' || format === 'text') console.log(css);
-    else fail(command, 'INVALID_FORMAT', `Unsupported css format: ${format}`, { json: wantsJson });
+    else console.log(css);
   } else if (wantsJson) console.log(jsonEnvelope(command, shape.agent));
-  else if (format === 'text') console.log(shape.agent.prompt);
-  else fail(command, 'INVALID_FORMAT', `Unsupported prompt format: ${format}`, { json: wantsJson });
+  else console.log(shape.agent.prompt);
 } else {
   console.log(`Svhapes ${catalog.packageVersion}\n\nCommands:\n  svhapes list [--family F] [--tag T] [--ratio N] [--capacity C] [--format table|ids|json]\n  svhapes show <id> [--format text|json]\n  svhapes css <id> [--shadow] [--format css|json]\n  svhapes prompt <id> [--format text|json]`);
 }
