@@ -39,7 +39,7 @@
     "./schema": "./schema/svhape.schema.json"
   },
   "bin": {
-    "svhapes": "./bin/svhapes.js"
+    "svhapes": "bin/svhapes.js"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
