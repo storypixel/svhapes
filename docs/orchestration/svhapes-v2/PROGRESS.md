@@ -50,7 +50,7 @@ The geometry helpers, five catalog presets, copyable demo recipes, docs, validat
 
 - **Worktree:** `/Users/swilson/projects/command-center/projects/active/svhapes`
 - **Branch:** `main`
-- **Relevant changes:** `50a52f8` contains the final geometry/demo source; `v0.2.1` is ready to tag after the final commit.
+- **Relevant changes:** `6e889aa` contains the final geometry/demo source; tag `v0.2.1` is pushed.
 - **Unrelated user changes preserved:** Yes.
 
 ## Next action
