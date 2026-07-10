@@ -72,6 +72,12 @@ test('filletPoints rounds each corner without hand-authored control points', () 
   assert.deepEqual(rounded.slice(0, 2), [[10, 26], [26, 10]]);
   assertBounded(rounded);
   assert.deepEqual(filletPoints(square, { radius: 0 }), square);
+  const mixed = filletPoints(square, { radius: [0, 0.2, 0.2, 0.2] });
+  assert.equal(mixed.length, 7);
+  assert.equal(new Set(mixed.map(JSON.stringify)).size, mixed.length);
+  assert.doesNotThrow(() => catmullRomToBezier(mixed));
+  const triangle = filletPoints([[10, 10], [90, 10], [50, 90]], { radius: 0.15 });
+  assert.equal(triangle.length, 6);
   assert.throws(() => filletPoints(square, { radius: 0.51 }), /between 0 and 0.5/);
   assert.throws(() => filletPoints([[10, 10], [10, 10], [90, 90], [10, 90]]), /zero-length/);
 });
@@ -83,6 +89,10 @@ test('repeating helpers expose the repetition count as a small deterministic API
   assert.ok(edge.length > 0);
   assertBounded(edge);
   assertBounded(radial);
+  assert.throws(() => makeRepeatingEdgeShape({ repeats: 4, amplitude: 100 }), /0\.\.100/);
+  assert.throws(() => makeRepeatingEdgeShape({ repeats: 4, inset: -5 }), /0\.\.100/);
+  assert.throws(() => makeRepeatingRadialShape({ repeats: 6, radius: [90, 90] }), /0\.\.100/);
+  assert.throws(() => makeRepeatingRadialShape({ repeats: 6, amplitude: Number.NaN }), /finite number/);
   assert.throws(() => makeRepeatingEdgeShape({ repeats: 0 }), /at least 1/);
   assert.throws(() => makeRepeatingRadialShape({ repeats: 2 }), /at least 3/);
 });

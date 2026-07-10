@@ -501,7 +501,7 @@ export const definitions = [
     selection: {
       uses: ['card', 'panel', 'shell'],
       aspect: { min: 0.9, preferred: 1.25, max: 2 },
-      symmetry: 'radial',
+      symmetry: 'bilateral',
       edgeActivity: 'calm',
     },
   }, makeSuperellipseShape({ exponent: 4, radius: [43, 42], points: 32 })),
@@ -516,7 +516,7 @@ export const definitions = [
     selection: {
       uses: ['card', 'media', 'panel'],
       aspect: { min: 0.85, preferred: 1.4, max: 2.25 },
-      symmetry: 'radial',
+      symmetry: 'bilateral',
     },
   }, makeSuperellipseShape({ exponent: 3, center: [50, 50], radius: [44, 40], points: 28 })),
   repeatEdge({

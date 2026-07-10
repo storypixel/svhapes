@@ -131,7 +131,7 @@ export function makeRadialShape({
  * the normalized 0..100 reference box. A per-corner array is also accepted.
  */
 export function filletPoints(points, { radius = 0.18, precision = 3 } = {}) {
-  const anchors = validatePoints(points);
+  const anchors = validatePoints(points, { minPoints: 3 });
   const radii = Array.isArray(radius) ? radius : anchors.map(() => radius);
 
   if (radii.length !== anchors.length) {
@@ -171,10 +171,14 @@ export function filletPoints(points, { radius = 0.18, precision = 3 } = {}) {
       point[1] + (outgoing[1] / outgoingLength) * distance,
     ];
 
-    filleted.push(beforeCorner, afterCorner);
+    if (distance === 0) {
+      filleted.push(point);
+    } else {
+      filleted.push(beforeCorner, afterCorner);
+    }
   });
 
-  return validatePoints(filleted).map(([x, y]) => [
+  return validatePoints(filleted, { minPoints: 3 }).map(([x, y]) => [
     roundCoordinate(x, precision),
     roundCoordinate(y, precision),
   ]);
@@ -189,7 +193,7 @@ export function makeRepeatingEdgeShape({ repeats = 4, ...options } = {}) {
     throw new RangeError('repeats must be an integer of at least 1');
   }
 
-  return makeEdgeShape({ ...options, counts: repeats });
+  return validatePoints(makeEdgeShape({ ...options, counts: repeats }));
 }
 
 /** Build a radial shape with a repeat count expressed as lobe count. */
@@ -198,7 +202,7 @@ export function makeRepeatingRadialShape({ repeats = 6, ...options } = {}) {
     throw new RangeError('repeats must be an integer of at least 3');
   }
 
-  return makeRadialShape({ ...options, lobes: repeats });
+  return validatePoints(makeRadialShape({ ...options, lobes: repeats }));
 }
 
 /**

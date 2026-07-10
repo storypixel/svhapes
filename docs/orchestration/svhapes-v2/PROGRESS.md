@@ -1,34 +1,39 @@
 # Svhapes v0.2 Geometry Helpers — Progress
 
 **Lane:** Feature
-**Status:** Active
-**Updated:** 2026-07-10
-**Current step:** Implement and test geometry builders
+**Status:** Complete
+**Updated:** 2026-07-10 15:00 CDT
+**Current step:** None — source and site are ready for npm auth/publication
 
 ## Outcome status
 
-The v0.1 library and motion examples are already live. This feature slice is adding three CSSWG-inspired geometry families, then will publish a minor release and refresh the mounted demo.
+The geometry helpers, five catalog presets, copyable demo recipes, docs, validation, and mounted site build are complete. The source is pushed and tagged for `v0.2.1`; npm publication is the only remaining external action because the registry requires a one-time browser confirmation.
 
 ## Work items
 
 | ID | Result | Status | Owner | Evidence/notes |
 |---|---|---|---|---|
-| T-001 | Fillet/repeating builders | In progress | Main | Source implementation next |
-| T-002 | Superellipse builder | Pending | Main | |
-| T-003 | Focused tests/build | Pending | Main | |
-| T-004 | Catalog presets | Pending | Main | |
-| T-005 | Demo recipes | Pending | Main | |
-| T-006 | Docs/agent guidance | Pending | Main | |
-| T-007 | npm v0.2.0 release | Pending | Main | Authorized |
-| T-008 | Site refresh/live verification | Pending | Main | Authorized |
+| T-001 | Fillet/repeating builders | Complete | Main | `src/builders.js`, bounded delegated outputs |
+| T-002 | Superellipse builder | Complete | Main | Ellipse-to-squircle exponent contract |
+| T-003 | Focused tests/build | Complete | Main | 12/12 tests, generated check, pack dry-run |
+| T-004 | Catalog presets | Complete | Main | 23 deterministic shape IDs |
+| T-005 | Demo recipes | Complete | Main | Three live copyable Builder cards |
+| T-006 | Docs/agent guidance | Complete | Main | README, llms.txt, AGENTS.md |
+| T-007 | npm v0.2.1 release | Pending auth | Main | Browser OTP confirmation required |
+| T-008 | Site refresh/live verification | Complete locally | Main | Site build passes; Pages push waits on npm publication |
 
 ## Validation evidence
 
 | Check | Result | Evidence |
 |---|---|---|
-| Existing v0.1 regression suite | Pass | 9/9 before new changes |
-| New geometry tests | Not run | Pending implementation |
-| Site/live verification | Not run | Pending release |
+| Existing + new regression suite | Pass | 12/12 tests |
+| Generated artifacts | Pass | `npm run check` current with 23 shapes |
+| Package contents | Pass | `npm run pack:check`, 15 files |
+| Desktop browser | Pass | 23 cards, 3 Builders, 3 Motion cards, no overflow |
+| 390px browser | Pass | `scrollWidth === clientWidth === 390`, no overflow |
+| Browser console | Pass | 0 errors after reload |
+| Site build | Pass | `npm run build` in storypixel.github.io |
+| npm publication | Pending auth | npm browser confirmation still required |
 
 ## Decisions and changed assumptions
 
@@ -39,14 +44,15 @@ The v0.1 library and motion examples are already live. This feature slice is add
 ## Risks, blockers, and approval gates
 
 - No blocker. npm and Pages publication are authorized for this feature.
+- v0.2.0 remains an un-published Git tag from the first release attempt; fixes are released as `v0.2.1` per review guidance.
 
 ## Repository state
 
 - **Worktree:** `/Users/swilson/projects/command-center/projects/active/svhapes`
 - **Branch:** `main`
-- **Relevant changes:** New feature branch changes are not committed yet.
+- **Relevant changes:** `50a52f8` contains the final geometry/demo source; `v0.2.1` is ready to tag after the final commit.
 - **Unrelated user changes preserved:** Yes.
 
 ## Next action
 
-Implement and test the three builders, then regenerate the catalog.
+Complete npm’s one-time browser authentication, publish `svhapes@0.2.1`, then push the site commit and verify Pages/live CDN responses.
