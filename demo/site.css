@@ -1234,6 +1234,13 @@ footer div a:hover {
     gap: 0.9rem;
   }
 
+  .site-header nav {
+    width: 100%;
+    justify-content: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+
   .hero-stage {
     height: 300px;
   }
